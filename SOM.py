@@ -46,11 +46,11 @@ class Map(object):
     #Initialise the Network
     def initialise(self):
         #10x10 Dimensional Grid
-        for i in xrange(self.length):
+        for i in range(self.length):
             self.outputs.append([])
-            for j in xrange(self.length):
+            for j in range(self.length):
                 self.outputs[i].append(Neuron(i,j,self.length))
-                for k in xrange(self.dimensions):
+                for k in range(self.dimensions):
                     self.outputs[i][j].weights.append(self.rand.random()) 
     
     #Load the dataset
@@ -63,13 +63,13 @@ class Map(object):
             line = line.strip()
             lineSet = line.split(',')
             self.patterns[lineSet[0]] = []
-            for i in xrange(self.dimensions):
+            for i in range(self.dimensions):
                 self.patterns[lineSet[0]].append(float(lineSet[i+1]))
         fileHandle.close()
 
     #Normalise the patterns
     def normalisePatterns(self):
-        for j in xrange(self.dimensions):
+        for j in range(self.dimensions):
             sum = 0.0
             for key in self.patterns.keys():
                 sum += self.patterns[key][j]
@@ -88,20 +88,20 @@ class Map(object):
             trainingSet = []
             for pattern in self.patterns.values():
                 trainingSet.append(pattern)
-            for i in xrange(len(self.patterns)):
+            for i in range(len(self.patterns)):
                 pattern = trainingSet[self.rand.randrange(len(self.patterns)-i)]
                 currentError += self.trainPattern(pattern)
                 trainingSet.remove(pattern)
             
-            print ("Current Error: %.7f" % (currentError,))
+            print(currentError)
     
     #Train Pattern
     #@param pattern: The input pattern
     def trainPattern(self,pattern):
         error = 0.0
         winner = self.winner(pattern)
-        for i in xrange(self.length):
-            for j in xrange(self.length):
+        for i in range(self.length):
+            for j in range(self.length):
                 error += self.outputs[i][j].updateWeights(pattern,winner,self.iteration)
         
         self.iteration+=1
@@ -114,8 +114,8 @@ class Map(object):
     def winner(self,pattern):
         winner = None
         minD = 10000000.0
-        for i in xrange(self.length):
-            for j in xrange(self.length):
+        for i in range(self.length):
+            for j in range(self.length):
                 d = self.distance(pattern,self.outputs[i][j].weights)
                 if d < minD:
                     minD = d
@@ -127,7 +127,7 @@ class Map(object):
     #@param outVector: the output neurons vector
     def distance(self,inVector,outVector):
         value = 0.0
-        for i in xrange(len(inVector)):
+        for i in range(len(inVector)):
             value +=  pow((inVector[i] - outVector[i]),2)
         
         return math.sqrt(value)
@@ -136,7 +136,7 @@ class Map(object):
     def dumpCoordinates(self):
         for key in self.patterns.keys():
             n = self.winner(self.patterns[key])
-            print ("%s,%d,%d" % (key,n.X,n.Y))
+            print(key,",", n.X, ",", n.Y)
  
 
 #Simple SOM Neuron
@@ -181,7 +181,7 @@ class Neuron(object):
     #@param iteration: The current iteration
     def updateWeights(self,pattern,winner,iteration):
         sum = 0.0
-        for i in xrange(len(self.weights)):
+        for i in range(len(self.weights)):
             delta = self.learningRate(iteration) * self.gauss(winner,iteration) * (pattern[i] - self.weights[i])
             self.weights[i] += delta
             sum += delta
